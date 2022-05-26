@@ -1,0 +1,54 @@
+{% extends 'trips/base.html' %} 
+{% block content %}
+<div class="container">
+    <center>
+        <h1>Мої поїздки</h1>
+    </center>
+    <br>
+    {% if tripsAsPassenger != None %}
+    <h3>Як Пасажир:</h3>
+    <div class="row row-cols-1 g-4">
+        {% for trip in tripsAsPassenger %}
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Поїздка з міста <b>{{trip.start_city}}</b> до міста <b>{{trip.end_city}}</b></h5>
+                    <p class="card-text">Час відбуття: <strong>{{trip.start_date_and_time}}</strong></p>
+                    <a href="{% url 'free-place' trip.id %}" class="btn btn-dark">Звільнити місце</a>
+                    <a href="{% url 'trip-details' trip.id %}" class="btn btn-primary">Детальніше</a>
+                </div> 
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <br>
+    {% endif %}
+    {% if tripsAsDriver != None %}
+    <h3>Як водій:</h3>
+    <div class="row row-cols-1 g-4">
+        {% for trip in tripsAsDriver %}
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Поїздка з міста <b>{{trip.start_city}}</b> до міста <b>{{trip.end_city}}</b></h5>
+                    <p class="card-text">Час відбуття: <strong>{{trip.start_date_and_time}}</strong></p>
+                    <a href="{% url 'delete-trip' trip.id %}" class="btn btn-danger">Видалити</a>
+                    <a href="{% url 'update-trip' trip.id %}" class="btn btn-secondary">Оновити</a>
+                    <a href="{% url 'trip-details' trip.id %}" class="btn btn-primary">Детальніше</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <br>
+    {% endif %}
+    {% if tripsAsDriver == None %}
+        {% if tripsAsPassenger == None %}
+        </br></br>
+        <center>
+        <a href="{% url 'list-trips' %}" class="btn btn-primary">У Вас наразі немає поїздок. Побачте доступні поїздки!</a>
+        </center>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
