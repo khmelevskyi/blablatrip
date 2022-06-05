@@ -1,6 +1,9 @@
 {% extends 'trips/base.html' %} 
 {% block content %}
 <div class="container">
+    {% if user_profiles != None %}
+    <p class="card-text">{{user_profiles}}</p>
+    {% endif %}
     <center>
         <h1>Мої поїздки</h1>
     </center>

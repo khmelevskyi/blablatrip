@@ -24,6 +24,19 @@ class Profile(Base):
     class Meta:
         abstract = True
 
+    
+    @staticmethod
+    def get_all_users_count_str():
+        return (f"Всього на сайті зараз зареєстровано "
+            f"{User.objects.count()} користувачів та "
+            f"{Passenger.objects.count()+Driver.objects.count()} профілів "
+            f"({Passenger.objects.count()} пасажирів та {Driver.objects.count()} водіїв)")
+    
+    @staticmethod
+    def get_user_profiles_count_str(user):
+        return (f"У Вас {Passenger.objects.filter(user=user).count()} "
+            f"профілів пасажирів та {Driver.objects.filter(user=user).count()} профілів водіїв")
+
 
 class Passenger(Profile):
     with_bagage = models.BooleanField()

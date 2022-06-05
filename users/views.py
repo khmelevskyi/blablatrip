@@ -55,7 +55,7 @@ def add_driver(request, trip_id):
                 driver.user = request.user
                 driver.save()
                 messages.success(request, ('Водій був успішно доданий.'))
-                if trip_id == -1:
+                if int(trip_id) == -1:
                     return redirect('add-trip')
                 else:
                     return redirect('update-trip', trip_id)

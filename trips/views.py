@@ -4,14 +4,13 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.contrib import messages
-from .models import Trip, City, Country
+from .models import Trip, City
 from .forms import TripForm, UpdateTripForm
-from users.models import Passenger, Driver
+from users.models import Passenger, Driver, Profile
 from .filters import TripFilter
 
 
 def add_trip(request):
-    submitted = False
     userDriver = Driver.objects.filter(user=request.user)
     if len(userDriver) == 0:
         messages.success(
@@ -42,16 +41,18 @@ def my_trips(request):
             passengers__user=request.user).order_by('start_date_and_time')
         tripsAsDriver = Trip.objects.filter(
             driver__user=request.user).order_by('start_date_and_time')
+        user_profiles = Profile.get_user_profiles_count_str(request.user)
         if len(tripsAsPassenger | tripsAsDriver) > 0:
             return render(request, 'trips/my_trips.html',
                           {
                               'tripsAsPassenger': tripsAsPassenger if len(Trip.objects.filter(passengers__user=request.user)) > 0 else None,
-                              'tripsAsDriver': tripsAsDriver if len(Trip.objects.filter(driver__user=request.user)) > 0 else None
+                              'tripsAsDriver': tripsAsDriver if len(Trip.objects.filter(driver__user=request.user)) > 0 else None,
+                              'user_profiles': user_profiles
                           })
         else:
             messages.success(
                 request, ('Здається, наразі у Вас немає поїздок.'))
-            return render(request, 'trips/my_trips.html', {'tripsAsPassenger': None, 'tripsAsDriver': None})
+            return render(request, 'trips/my_trips.html', {'tripsAsPassenger': None, 'tripsAsDriver': None, 'user_profiles': None})
     else:
         messages.success(
             request, ('Потрібно увійти, щоб побачити свої поїздки.'))
@@ -158,9 +159,15 @@ def active_trips(request):
     paginator = Paginator(trips, 2)
     page = request.GET.get('page')
     tripsForPage = paginator.get_page(page)
+    all_users_profiles = Profile.get_all_users_count_str()
+    all_active_trips = Trip.get_all_trips_count_str()
     if request.GET.get('showFilter') == 'Filter':
         return render(request, 'trips/active_trips.html', {'trips': trips, 'filter': tripFilter, 'tripsForPage': tripsForPage, 'showFilter': True})
-    return render(request, 'trips/active_trips.html', {'trips': trips, 'filter': tripFilter, 'tripsForPage': tripsForPage})
+    return render(
+        request,
+        'trips/active_trips.html',
+        {'trips': trips, 'filter': tripFilter, 'tripsForPage': tripsForPage, 'all_users_profiles': all_users_profiles, 'all_active_trips': all_active_trips}
+    )
 
 
 def update_trip(request, trip_id):

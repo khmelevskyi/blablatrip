@@ -51,5 +51,9 @@ class Trip(models.Model):
     def isActive(self):
         return timezone.now() > self.start_date_and_time
 
+    @staticmethod
+    def get_all_trips_count_str():
+        return (f"Активних поїздок: {Trip.objects.filter(start_date_and_time__gte=timezone.now(), places_left__gt=0).count()}")
+
     def __str__(self):
         return f'Start City: {self.start_city} | End City: {self.end_city} | {self.driver}'

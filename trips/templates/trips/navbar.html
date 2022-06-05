@@ -21,6 +21,11 @@
                     <a class="nav-link" href="{% url 'add-trip' %}">Створити поїздку</a>
                 </li>
                 {% endif %}
+                {% if user.is_staff %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin:index' %}">Адмін панель</a>
+                </li>
+                {% endif %}
         </div>
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
             <ul class="nav navbar-nav ml-auto">
